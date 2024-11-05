@@ -86,13 +86,39 @@ class TodoAppTest {
     assertThat(locator).containsText("Buy eggs");
   }
 
+  @Test
+  @Order(6)
+  void check_mark_completed(Page page) {
+    page.navigate(TEST_HOST);
+
+    addItem(page, "Buy milk");
+    var firstItem = page.locator(".todo-item:nth-child(1)");
+    assertThat(firstItem).containsText("Buy milk");
+
+    addItem(page, "Buy eggs");
+    var secondItem = page.locator(".todo-item:nth-child(2)");
+    assertThat(secondItem).containsText("Buy eggs");
+    secondItem.getByRole(AriaRole.CHECKBOX).click();
+
+    var secondItemStatus = secondItem.locator("span");
+    assertThat(secondItemStatus).hasClass("completed");
+
+    var clearBtn = page.locator(".clearCompletedBtn");
+    assertThat(clearBtn).isVisible();
+
+    clearBtn.click();
+
+    assertThat(secondItem).not().isVisible();
+    assertThat(firstItem).isVisible();
+  }
+
   private void addItem(Page page, String item) {
     page.fill("input", item);
     page.keyboard().press("Enter");
   }
 
   private void removeItem(Page page) {
-    Locator items =  page.getByRole(
+    Locator items = page.getByRole(
         AriaRole.BUTTON,
         new Page.GetByRoleOptions().setName(Pattern.compile("Delete", Pattern.CASE_INSENSITIVE)));
     if (items.count() > 0) {

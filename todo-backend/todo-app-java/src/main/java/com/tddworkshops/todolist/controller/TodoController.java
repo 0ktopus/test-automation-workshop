@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -56,6 +57,13 @@ public class TodoController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    // Post
+    @PostMapping("/clear-completed")
+    public ResponseEntity<Map<String, String>> clearCompletedTodos() {
+        todoService.clearCompletedTodos();
+        return ResponseEntity.ok(Map.of("message", "Completed Tasks Deleted"));
     }
 
     // Delete a todo item by ID
